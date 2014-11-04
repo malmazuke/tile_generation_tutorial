@@ -10,32 +10,48 @@ public class TileMap : MonoBehaviour {
 	public int sizeX = 100;
 	public int sizeZ =  50;
 	public float tileSize = 1.0f;
-	public float tileHeight = 0.2f;
-	int tileResolution = 8;
+	public float tileHeight = 0.2f;	
+	public Texture2D terrainTiles;
+	public int tileResolution;
 	
 	// Use this for initialization
 	void Start () {
 		BuildMesh();
 	}
 	
+	Color[][] ChopUpTiles() {
+		int numTilesPerRow = terrainTiles.width / tileResolution;
+		int numRows = terrainTiles.height / tileResolution;
+		
+		Color[][] tiles = new Color[numTilesPerRow * numRows][];
+		
+		for (int y = 0; y < numRows; y++) {
+			for (int x = 0; x < numTilesPerRow; x++) {
+				tiles[y * numTilesPerRow + x] = terrainTiles.GetPixels(x*tileResolution, y*tileResolution, tileResolution, tileResolution);
+			}
+		}
+		
+		return tiles;
+	}
+	
 	public void BuildTexture() {
-		int texWidth = 10;
-		int texHeight = 10;
+		int texWidth = sizeX * tileResolution;
+		int texHeight = sizeZ * tileResolution;
 		Texture2D texture = new Texture2D(texWidth, texHeight);
 		
-		for (int y = 0; y < texHeight; y++) {
-			for (int x = 0; x < texWidth; x++) {
-				Color c = new Color(Random.Range(0.0f, 1.0f), Random.Range(0.0f, 1.0f), Random.Range(0.0f, 1.0f));
-				texture.SetPixel(x, y, c); 
+		Color[][] tiles = ChopUpTiles();
+		
+		for (int y = 0; y < sizeZ; y++) {
+			for (int x = 0; x < sizeX; x++) {
+				Color[] p = tiles[Random.Range(0, tiles.Length)];
+				texture.SetPixels(x * tileResolution, y * tileResolution, tileResolution, tileResolution, p);
 			} 
 		}
 		texture.filterMode = FilterMode.Point;
 		texture.Apply();
 		
 		MeshRenderer meshRenderer = GetComponent<MeshRenderer>();
-		meshRenderer.sharedMaterials[0].mainTexture = texture;//.SetTexture(texture);
-		
-		Debug.Log ("Done Texture!");
+		meshRenderer.sharedMaterials[0].mainTexture = texture;
 	}
 	
 	public void BuildMesh() {		
