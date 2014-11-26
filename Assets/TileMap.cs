@@ -10,7 +10,7 @@ public class TileMap : MonoBehaviour {
 	public int sizeX = 100;
 	public int sizeZ =  50;
 	public float tileSize = 1.0f;
-	public float tileHeight = 0.2f;	
+	public float tileHeight = 0.2f;
 	public Texture2D terrainTiles;
 	public int tileResolution;
 	
