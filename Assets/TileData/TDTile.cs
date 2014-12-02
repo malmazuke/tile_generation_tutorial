@@ -2,7 +2,7 @@
 
 public class TDTile {
 	
-	enum TYPE {
+	public enum TYPE {
 		OCEAN,
 		GRASSLAND,
 		PLAINS,

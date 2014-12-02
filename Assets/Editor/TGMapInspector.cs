@@ -1,14 +1,14 @@
 ﻿using UnityEditor;
 using UnityEngine;
 
-[CustomEditor(typeof(TileMap))]
-public class TileMapInspector : Editor {
+[CustomEditor(typeof(TGMap))]
+public class TGMapInspector : Editor {
 
 	public override void OnInspectorGUI() {
 		DrawDefaultInspector();
 		
 		if (GUILayout.Button("Regenerate")){
-			TileMap map = (TileMap)target;
+			TGMap map = (TGMap)target;
 			map.BuildMesh();
 		}
 	}
