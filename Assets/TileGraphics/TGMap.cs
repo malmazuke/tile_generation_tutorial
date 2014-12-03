@@ -1,6 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
 
+[ExecuteInEditMode]
 [RequireComponent(typeof(MeshFilter  ))]
 [RequireComponent(typeof(MeshRenderer))]
 [RequireComponent(typeof(MeshCollider))]
@@ -15,7 +16,42 @@ public class TGMap : MonoBehaviour {
 	
 	// Use this for initialization
 	void Start () {
-//		BuildMesh();
+		BuildMesh();
+	}
+	
+	Color[][] ChopUpTiles() {
+		int numTilesPerRow = terrainTiles.width / tileResolution;
+		int numRows = terrainTiles.height / tileResolution;
+		
+		Color[][] tiles = new Color[numTilesPerRow * numRows][];
+		
+		for (int y = 0; y < numRows; y++) {
+			for (int x = 0; x < numTilesPerRow; x++) {
+				tiles[y * numTilesPerRow + x] = terrainTiles.GetPixels(x*tileResolution, y*tileResolution, tileResolution, tileResolution);
+			}
+		}
+		
+		return tiles;
+	}
+	
+	public void BuildTexture() {
+		int texWidth = sizeX * tileResolution;
+		int texHeight = sizeZ * tileResolution;
+		Texture2D texture = new Texture2D(texWidth, texHeight);
+		
+		Color[][] tiles = ChopUpTiles();
+		
+		for (int y = 0; y < sizeZ; y++) {
+			for (int x = 0; x < sizeX; x++) {
+				Color[] p = tiles[Random.Range(0, tiles.Length)];
+				texture.SetPixels(x * tileResolution, y * tileResolution, tileResolution, tileResolution, p);
+			} 
+		}
+		texture.filterMode = FilterMode.Point;
+		texture.Apply();
+		
+		MeshRenderer meshRenderer = GetComponent<MeshRenderer>();
+		meshRenderer.sharedMaterials[0].mainTexture = texture;
 	}
 	
 	public void BuildMesh() {		
