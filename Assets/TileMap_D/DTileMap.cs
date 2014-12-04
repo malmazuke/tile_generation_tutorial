@@ -1,4 +1,4 @@
-﻿
+﻿using UnityEngine;
 public class DTileMap {
 
 	public enum TYPE {
@@ -13,17 +13,18 @@ public class DTileMap {
 
 	TYPE[,] map_data;
 
-//	public DTileMap() {
-//		this(20, 20);
-//	}
-
 	public DTileMap(int size_x, int size_y) {
 		this.size_x = size_x;
 		this.size_y = size_y;
 
 		map_data = new TYPE[this.size_x, this.size_y];
 
-		MakeRoom (3, 3, 5, 5);
+		for (int i = 0; i < 10; i++) {
+			int r_sizeX = Random.Range(4, 8);
+			int r_sizeY = Random.Range(4, 8);
+
+			MakeRoom (Random.Range(0, size_x - r_sizeX), Random.Range(0, size_y - r_sizeY), r_sizeX, r_sizeY);
+		}
 	}
 
 	public TYPE GetTileAt(int x, int y) {
@@ -34,7 +35,11 @@ public class DTileMap {
 
 		for (int x = 0; x < width; x++) {
 			for (int y = 0; y < height; y++) {
+				if (x == 0 || x == width - 1 || y == 0 || y == height - 1) {
+					map_data[left + x, top + y] = TYPE.WALL;
+				} else {
 				map_data[left + x, top + y] = TYPE.FLOOR;
+				}
 			}
 		}
 	}
