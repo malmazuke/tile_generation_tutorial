@@ -7,8 +7,8 @@ using System.Collections;
 [RequireComponent(typeof(MeshCollider))]
 public class TGMap : MonoBehaviour {
 
-	public int sizeX = 100;
-	public int sizeZ =  50;
+	public int size_x = 100;
+	public int size_z =  50;
 	public float tileSize = 1.0f;
 	public float tileHeight = 0.2f;
 	public Texture2D terrainTiles;
@@ -35,15 +35,17 @@ public class TGMap : MonoBehaviour {
 	}
 	
 	public void BuildTexture() {
-		int texWidth = sizeX * tileResolution;
-		int texHeight = sizeZ * tileResolution;
+		DTileMap map = new DTileMap (size_x, size_z);
+
+		int texWidth = size_x * tileResolution;
+		int texHeight = size_z * tileResolution;
 		Texture2D texture = new Texture2D(texWidth, texHeight);
 		
 		Color[][] tiles = ChopUpTiles();
 		
-		for (int y = 0; y < sizeZ; y++) {
-			for (int x = 0; x < sizeX; x++) {
-				Color[] p = tiles[Random.Range(0, tiles.Length)];
+		for (int y = 0; y < size_z; y++) {
+			for (int x = 0; x < size_x; x++) {
+				Color[] p = tiles[(int)map.GetTileAt(x,y)];
 				texture.SetPixels(x * tileResolution, y * tileResolution, tileResolution, tileResolution, p);
 			} 
 		}
@@ -54,12 +56,12 @@ public class TGMap : MonoBehaviour {
 		meshRenderer.sharedMaterials[0].mainTexture = texture;
 	}
 	
-	public void BuildMesh() {		
-		int numTiles = sizeX * sizeZ;
+	public void BuildMesh() {	
+		int numTiles = size_x * size_z;
 		int numTris = numTiles * 2;
 		
-		int vSizeX = sizeX + 1;
-		int vSizeZ = sizeZ + 1;
+		int vSizeX = size_x + 1;
+		int vSizeZ = size_z + 1;
 		int numVerts = vSizeX * vSizeZ;
 		 
 		// Generate the mesh data
@@ -73,24 +75,24 @@ public class TGMap : MonoBehaviour {
 		
 		for (z = 0; z < vSizeZ; z++) {
 			for (x = 0; x < vSizeX; x++) {
-				vertices[z * vSizeX + x] = new Vector3(x * tileSize, Random.Range(-tileHeight, tileHeight), z * tileSize);
+				vertices[z * vSizeX + x] = new Vector3(x * tileSize, 0, -z * tileSize);
 				normals[z * vSizeX + x] = Vector3.up;
-				uv[z * vSizeX + x] = new Vector2((float)x / sizeX, (float)z / sizeZ);
+				uv[z * vSizeX + x] = new Vector2((float)x / size_x, (float)z / size_z);
 			}
 		}
 		
-		for (z = 0; z < sizeZ; z++) {
-			for (x = 0; x < sizeX; x++) { 
-				int squareIndex = z * sizeX + x;
+		for (z = 0; z < size_z; z++) {
+			for (x = 0; x < size_x; x++) { 
+				int squareIndex = z * size_x + x;
 				int triOffset = squareIndex * 6;
 				
 				triangles[triOffset + 0] = z * vSizeX + x + 	   	 0;
-				triangles[triOffset + 1] = z * vSizeX + x + vSizeX + 0;
-				triangles[triOffset + 2] = z * vSizeX + x + vSizeX + 1;
+				triangles[triOffset + 2] = z * vSizeX + x + vSizeX + 0;
+				triangles[triOffset + 1] = z * vSizeX + x + vSizeX + 1;
 				
 				triangles[triOffset + 3] = z * vSizeX + x +  	     0;
-				triangles[triOffset + 4] = z * vSizeX + x + vSizeX + 1;
-				triangles[triOffset + 5] = z * vSizeX + x + 		 1;
+				triangles[triOffset + 5] = z * vSizeX + x + vSizeX + 1;
+				triangles[triOffset + 4] = z * vSizeX + x + 		 1;
 			}
 		}
 		
