@@ -8,6 +8,23 @@ public class DTileMap {
 		public int top;
 		public int width;
 		public int height;
+		
+		public int right {
+			get { return this.left + this.width - 1; }
+		}
+		
+		public int bottom {
+			get { return this.top + this.height - 1; }
+		}
+		
+		public bool CollidesWith(DRoom other) {
+			if (this.left   > other.right  - 1) return false;
+			if (this.top    > other.bottom - 1) return false;
+			if (this.right  < other.left   + 1) return false;
+			if (this.bottom < other.top    + 1) return false;
+			
+			return true;
+		}
 	}
 	
 	public enum TYPE {
@@ -30,9 +47,15 @@ public class DTileMap {
 
 		map_data = new TYPE[this.size_x, this.size_y];
 		
+		for (int x = 0; x < this.size_x; x++) {
+			for (int y = 0; y < this.size_y; y++) {
+				map_data[x,y] = TYPE.ROCK;
+			}
+		}
+		
 		rooms = new List<DRoom>();
 
-		for (int i = 0; i < 10; i++) {
+		for (int i = 0; i < 20; i++) {
 			int r_sizeX = Random.Range(4, 8);
 			int r_sizeY = Random.Range(4, 8);
 
@@ -42,12 +65,26 @@ public class DTileMap {
 			r.width = r_sizeX;
 			r.height = r_sizeY;
 			
-			rooms.Add(r);
-			
+			if (!RoomCollides(r)) {
+				rooms.Add(r);
+			}
+		}
+		
+		foreach(DRoom r in rooms) {
 			MakeRoom(r);
 		}
 	}
 
+	bool RoomCollides(DRoom r) {
+		foreach(DRoom r2 in rooms) {
+			if (r.CollidesWith(r2)){
+				return true;
+			}
+		}
+		
+		return false;
+	}
+	
 	public TYPE GetTileAt(int x, int y) {
 		return map_data [x, y];
 	}
