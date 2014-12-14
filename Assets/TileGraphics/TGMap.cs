@@ -77,7 +77,7 @@ public class TGMap : MonoBehaviour {
 			for (x = 0; x < vSizeX; x++) {
 				vertices[z * vSizeX + x] = new Vector3(x * tileSize, 0, -z * tileSize);
 				normals[z * vSizeX + x] = Vector3.up;
-				uv[z * vSizeX + x] = new Vector2((float)x / size_x, (float)z / size_z);
+				uv[z * vSizeX + x] = new Vector2((float)x / size_x, 1f - (float)z / size_z);
 			}
 		}
 		
