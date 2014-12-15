@@ -60,12 +60,13 @@ public class DTileMap {
 				_mapData[x,y] = TYPE.ROCK;
 			}
 		}
-		
+
 		_rooms = new List<DRoom>();
 
-		for (int i = 0; i < 20; i++) {
-			int rSizeX = Random.Range(4, 8);
-			int rSizeY = Random.Range(4, 8);
+		int maxFails = 10;
+		while (_rooms.Count < 10 && maxFails != 0) {
+			int rSizeX = Random.Range(4, 14);
+			int rSizeY = Random.Range(4, 10);
 
 			DRoom r = new DRoom();
 			r.left = Random.Range(0, this._sizeX - rSizeX);
@@ -75,6 +76,8 @@ public class DTileMap {
 			
 			if (!RoomCollides(r)) {
 				_rooms.Add(r);
+			} else {
+				maxFails--;
 			}
 		}
 		
@@ -115,12 +118,13 @@ public class DTileMap {
 		int x = r1.centerX;
 		int y = r1.centerY;
 
-		while (x < r2.centerX) {
-			while (y < r2.centerY) {
-				_mapData[x, y] = TYPE.FLOOR;
-				y++;
-			}
-			x++;
+		while (x != r2.centerX) {
+			_mapData[x, y] = TYPE.FLOOR;
+			x += x < r2.centerX ? 1 : -1;
+		}
+		while (y != r2.centerY) {
+			_mapData[x, y] = TYPE.FLOOR;
+			y += y < r2.centerY ? 1 : -1;
 		}
 	}
 }
