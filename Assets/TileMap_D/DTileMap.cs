@@ -9,6 +9,8 @@ public class DTileMap {
 		public int width;
 		public int height;
 		
+		public bool isConnected;
+		
 		public int right {
 			get { return this.left + this.width - 1; }
 		}
@@ -85,7 +87,19 @@ public class DTileMap {
 			MakeRoom(r);
 		}
 
-		MakeCorridor (_rooms [0], _rooms [1]);
+		for (int i = 0; i < _rooms.Count; i++) {
+			DRoom r1 = _rooms[i];
+			
+			int randRoomIndex = Random.Range(0, _rooms.Count - 1);
+			if (!r1.isConnected) {
+				DRoom r2 = _rooms[(i + randRoomIndex) % _rooms.Count];
+				MakeCorridor(r1, r2);
+				r1.isConnected = true;
+				r2.isConnected = true;
+			}
+		}
+        
+        MakeWalls();
 	}
 
 	bool RoomCollides(DRoom r) {
@@ -126,5 +140,29 @@ public class DTileMap {
 			_mapData[x, y] = TYPE.FLOOR;
 			y += y < r2.centerY ? 1 : -1;
 		}
+	}
+	
+	void MakeWalls() {
+		for (int x = 0; x < _sizeX; x++) {
+			for (int y = 0; y < _sizeY; y++) {
+				if (_mapData[x, y] == TYPE.ROCK && HasAdjacentFloor(x, y)) {
+					_mapData[x, y] = TYPE.WALL;
+				}
+			}
+		}
+	}
+	
+	bool HasAdjacentFloor(int x, int y) {
+		if (x > 0        && _mapData[x - 1, y] == TYPE.FLOOR)	return true;
+		if (x < _sizeX-1 && _mapData[x + 1, y] == TYPE.FLOOR) return true;
+		if (y > 0        && _mapData[x, y - 1] == TYPE.FLOOR) return true;
+		if (y < _sizeY-1 && _mapData[x, y + 1] == TYPE.FLOOR) return true;
+        
+        if (x > 0        && y > 0        && _mapData[x - 1, y - 1] == TYPE.FLOOR) return true;
+        if (x > 0        && y < _sizeY-1 && _mapData[x - 1, y + 1] == TYPE.FLOOR) return true;
+        if (x < _sizeX-1 && y > 0        && _mapData[x + 1, y - 1] == TYPE.FLOOR) return true;
+        if (x < _sizeX-1 && y < _sizeY-1 && _mapData[x + 1, y + 1] == TYPE.FLOOR) return true;
+        
+		return false;
 	}
 }
