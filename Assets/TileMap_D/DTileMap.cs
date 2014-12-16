@@ -89,13 +89,10 @@ public class DTileMap {
 
 		for (int i = 0; i < _rooms.Count; i++) {
 			DRoom r1 = _rooms[i];
-			
 			int randRoomIndex = Random.Range(0, _rooms.Count - 1);
 			if (!r1.isConnected) {
 				DRoom r2 = _rooms[(i + randRoomIndex) % _rooms.Count];
 				MakeCorridor(r1, r2);
-				r1.isConnected = true;
-				r2.isConnected = true;
 			}
 		}
         
@@ -153,7 +150,7 @@ public class DTileMap {
 	}
 	
 	bool HasAdjacentFloor(int x, int y) {
-		if (x > 0        && _mapData[x - 1, y] == TYPE.FLOOR)	return true;
+		if (x > 0        && _mapData[x - 1, y] == TYPE.FLOOR) return true;
 		if (x < _sizeX-1 && _mapData[x + 1, y] == TYPE.FLOOR) return true;
 		if (y > 0        && _mapData[x, y - 1] == TYPE.FLOOR) return true;
 		if (y < _sizeY-1 && _mapData[x, y + 1] == TYPE.FLOOR) return true;
